@@ -1,5 +1,5 @@
 server {
-    listen 80;
+    listen 80 default_server;
     server_name hackaton2025.site;
 
     root /var/www/html;
@@ -57,4 +57,39 @@ server {
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
     }
+<<<<<<< HEAD
+=======
+
+    location /redblue {
+	proxy_read_timeout 300s;
+	proxy_connect_timeout 75s;
+	proxy_http_version 1.1;
+	proxy_pass http://redblue;
+    }
+>>>>>>> ea6f466 (Added a redblue)
+}
+
+server {
+    listen 5000;
+    server_name red;
+    root /var/www/html;
+    index index.html;
+    location /redblue {
+        try_files /red.html =404;
+    }
+}
+
+server {
+    listen 5001;
+    server_name blue;
+    root /var/www/html;
+    index index.html;
+    location /redblue {
+	try_files /blue.html =404;
+    }
+}
+
+upstream redblue {
+    server 127.0.0.1:5000;
+    server 127.0.0.1:5001;
 }

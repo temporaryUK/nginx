@@ -12,8 +12,7 @@ server {
 
     # Статическая вторая страница
     location /secondpage {
-        alias /var/www/html/;
-        try_files secondpage.html =404;
+        try_files /secondpage.html =404;
     }
 
     # Музыка (скачивание)
@@ -34,5 +33,9 @@ server {
         proxy_pass http://192.168.1.100:9000/;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
+    }
+
+    location /redblue {
+	try_files /redblue.html =404;
     }
 }

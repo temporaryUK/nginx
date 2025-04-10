@@ -1,0 +1,4 @@
+#!/bin/bash
+
+cp -r var_www_html/* /var/www/html
+cp -r etc_nginx/sites_available/* /etc/nginx/sites-available

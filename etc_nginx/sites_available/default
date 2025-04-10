@@ -1,6 +1,6 @@
 server {
     listen 80 default_server;
-    server_name hackaton2025.site;
+    server_name _;
 
     root /var/www/html;
     index index.html index.htm index.php;
@@ -12,8 +12,7 @@ server {
 
     # Статическая вторая страница
     location /secondpage {
-        alias /var/www/html/;
-        try_files secondpage.html =404;
+        try_files /secondpage.html =404;
     }
 
     # Музыка (скачивание)
@@ -25,8 +24,8 @@ server {
 
     location ~* ^/image1/(.*\.jpg)$ {
     # Переворачиваем JPG изображения вертикально
-        image_filter rotate 180;
-        image_filter_jpeg_quality 85;
+	#image_filter rotate 180;
+	#image_filter_jpeg_quality 85;
         try_files /$1 =404;
     }
 
@@ -45,10 +44,9 @@ server {
     }
 
     # Проксирование запроса на Apache с PHP (например, Apache на 127.0.0.1:8080)
-    location /info.php {
-        proxy_pass http://127.0.0.1:8080/info.php;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
+    location ~ \.php$ {
+	include snippets/fastcgi-php.conf;
+	fastcgi_pass unix:/run/php/php8.2-fpm.sock;
     }
 
     # Проксирование на другой сервер
@@ -57,8 +55,6 @@ server {
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
     }
-<<<<<<< HEAD
-=======
 
     location /redblue {
 	proxy_read_timeout 300s;
@@ -66,7 +62,6 @@ server {
 	proxy_http_version 1.1;
 	proxy_pass http://redblue;
     }
->>>>>>> ea6f466 (Added a redblue)
 }
 
 server {

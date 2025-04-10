@@ -12,13 +12,36 @@ server {
 
     # Статическая вторая страница
     location /secondpage {
-        try_files /secondpage.html =404;
+        alias /var/www/html/;
+        try_files secondpage.html =404;
     }
 
     # Музыка (скачивание)
     location /music {
         alias /var/www/html/music.mp3;
         add_header Content-Disposition "attachment; filename=music.mp3";
+    }
+
+
+    location ~* ^/image1/(.*\.jpg)$ {
+    # Переворачиваем JPG изображения вертикально
+        image_filter rotate 180;
+        image_filter_jpeg_quality 85;
+        try_files /$1 =404;
+    }
+
+    location ~* ^/image2/(.*\.png)$ {
+        # Обычная обработка PNG без изменений
+        try_files /$1 =404;
+    }
+    # Перенаправление для JPG -> /image1
+    location ~* \.jpg$ {
+        return 301 /image1$request_uri;
+    }
+
+    # Перенаправление для PNG -> /image2
+    location ~* \.png$ {
+        return 301 /image2$request_uri;
     }
 
     # Проксирование запроса на Apache с PHP (например, Apache на 127.0.0.1:8080)
@@ -33,9 +56,5 @@ server {
         proxy_pass http://192.168.1.100:9000/;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
-    }
-
-    location /redblue {
-	try_files /redblue.html =404;
     }
 }

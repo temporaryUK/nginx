@@ -12,7 +12,8 @@ server {
 
     # Статическая вторая страница
     location /secondpage {
-        alias /var/www/html/secondpage.html;
+        alias /var/www/html/;
+        try_files secondpage.html =404;
     }
 
     # Музыка (скачивание)

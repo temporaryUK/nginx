@@ -1,0 +1,5 @@
+#nginx
+location /music {
+    alias /var/www/html/music.mp3;
+    add_header Content-Disposition "attachment; filename=music.mp3";
+}

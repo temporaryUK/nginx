@@ -1,18 +1,30 @@
-FROM debian:stable
+FROM debian:stable-slim
 
-RUN apt update
-RUN apt install -y nginx php8.2-fpm libnginx-mod-http-image-filter
+# Устанавливаем зависимости
+RUN apt-get update && \
+    apt-get install -y nginx php8.2-fpm libnginx-mod-http-image-filter && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
+# Создаем необходимые директории
+RUN mkdir -p /run/nginx && \
+    mkdir -p /var/www/html && \
+    chown -R www-data:www-data /var/www/html && \
+    chmod -R 755 /var/www/html
+
+# Копируем конфигурации
 COPY ./etc_nginx /etc/nginx
-#RUN ls /tmp
-#RUN mv /tmp/etc_nginx/* /etc/nginx
-#RUN rmdir /tmp/etc_nginx
-
 COPY ./var_www_html /var/www/html
-#RUN mv /tmp/var_www_html/* /var/www/html
-#RUN rmdir /tmp/var_www_html
 
-RUN useradd app
-USER app
+# Создаем пользователя (если действительно нужно)
+RUN useradd -r -s /bin/false app
 
-CMD ["nginx", "-s", "reload"]
+# Настраиваем права
+RUN chown -R app:app /var/www/html && \
+    chown -R app:app /etc/nginx
+
+# Открываем порт
+EXPOSE 80 443
+
+# Запускаем сервисы
+CMD service php8.2-fpm start && nginx -g "daemon off;"

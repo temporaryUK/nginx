@@ -1,3 +1,0 @@
-location /secondpage {
-    alias /var/www/html/secondpage.html;
-}
